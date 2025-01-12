@@ -1,7 +1,5 @@
 local builtin = require("telescope.builtin")
 local utils = require('telescope.utils')
-local previewers = require("telescope.previewers")
-local from_entry = require("telescope.from_entry")
 local z_utils = require("telescope._extensions.zoxide.utils")
 
 local truncate = require("plenary.strings").truncate
