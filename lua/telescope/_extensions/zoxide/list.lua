@@ -146,7 +146,6 @@ return function(opts)
       entry_maker = entry_maker(opts)
     },
     sorter = fuzzy_with_z_score_bias(opts),
-    previewer = z_config.get_config().previewer,
     attach_mappings = function(prompt_bufnr, map)
       local mappings = z_config.get_config().mappings
 
