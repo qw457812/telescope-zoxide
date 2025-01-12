@@ -1,5 +1,5 @@
 local builtin = require("telescope.builtin")
-local utils = require('telescope.utils')
+local utils = require("telescope.utils")
 local z_utils = require("telescope._extensions.zoxide.utils")
 
 local truncate = require("plenary.strings").truncate
@@ -18,28 +18,22 @@ local default_config = {
         vim.cmd.cd(selection.path)
       end,
       after_action = function(selection)
-        print("Directory changed to " .. selection.path)
-      end
+        vim.notify("Directory changed to " .. selection.path)
+      end,
     },
     ["<C-s>"] = { action = z_utils.create_basic_command("split") },
     ["<C-v>"] = { action = z_utils.create_basic_command("vsplit") },
     ["<C-e>"] = { action = z_utils.create_basic_command("edit") },
-    ["<C-b>"] = {
-      keepinsert = true,
-      action = function(selection)
-        builtin.file_browser({ cwd = selection.path })
-      end
-    },
     ["<C-f>"] = {
       keepinsert = true,
       action = function(selection)
         builtin.find_files({ cwd = selection.path })
-      end
+      end,
     },
     ["<C-t>"] = {
       action = function(selection)
         vim.cmd.tcd(selection.path)
-      end
+      end,
     },
   },
 
@@ -95,7 +89,6 @@ config.setup = function(user_config)
   -- Copy defaults in temp mapping
   for map_key, map_value in pairs(default_config.mappings) do
     for action_key, action_value in pairs(map_value) do
-
       if temp_mappings[map_key] == nil then
         temp_mappings[map_key] = {}
       end
