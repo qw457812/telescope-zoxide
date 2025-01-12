@@ -185,11 +185,10 @@ vim.keymap.set("n", "<leader>cd", t.extensions.zoxide.list)
       opts.__prefix = 0
     end
     transformed_path = truncate(transformed_path, opts.__length - opts.__prefix, nil, -1)
-    -- Filename highlighting
+    -- Dim parent directories
     local tail = utils.path_tail(path)
     local path_style = {
       { { 0, #transformed_path - #tail }, "Comment" },
-      -- { { #transformed_path - #tail, #transformed_path }, "TelescopeResultsIdentifier" },
     }
     return transformed_path, path_style
   end,

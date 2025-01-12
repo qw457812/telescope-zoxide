@@ -5,7 +5,6 @@ local pickers = require('telescope.pickers')
 local sorters = require('telescope.sorters')
 local entry_display = require('telescope.pickers.entry_display')
 local utils = require('telescope.utils')
-
 local z_config = require("telescope._extensions.zoxide.config")
 
 local map_both = function(map, keys, func)
@@ -65,51 +64,40 @@ end
 local entry_maker = function(opts)
   opts = opts or {}
 
+  local show_score = z_config.get_config().show_score
+  local score_width = show_score and 7 or 0
+
+  local display_items = { { remaining = true } }
+  if show_score then
+    table.insert(display_items, 1, { width = score_width, right_justify = true })
+  end
+
+  local displayer = entry_display.create({
+    separator = " ",
+    items = display_items,
+  })
+
+  local make_display = function(entry)
+    opts.__prefix = score_width
+    local display_path, path_style = utils.transform_path(opts, entry.path)
+    local display_columns = {
+      {
+        display_path,
+        function()
+          return path_style
+        end,
+      },
+    }
+    if show_score then
+      table.insert(display_columns, 1, { ("%.1f"):format(entry.z_score), "TelescopeResultsNumber" })
+    end
+    return displayer(display_columns)
+  end
+
   return function(item)
     local trimmed = string.gsub(item, '^%s*(.-)%s*$', '%1')
     local item_path = string.gsub(trimmed, '^[^%s]* (.*)$', '%1')
     local score = tonumber(string.gsub(trimmed, '^([^%s]*) .*$', '%1'), 10)
-
-    local display_items = {
-      { remaining = true },
-    }
-
-    local show_score = z_config.get_config().show_score
-    local score_width = 0
-    if show_score then
-      score_width = 7
-      table.insert(display_items, 1, { width = score_width, right_justify = true })
-    end
-
-    local displayer = entry_display.create({
-      separator = " ",
-      items = display_items,
-    })
-
-    local make_display = function()
-      opts.__prefix = score_width
-      local display_path, path_style = utils.transform_path(opts, item_path)
-      if show_score then
-        return displayer {
-          { ("%.2f"):format(score), "TelescopeResultsNumber" },
-          {
-            display_path,
-            function()
-              return path_style
-            end,
-          },
-        }
-      else
-        return displayer {
-          {
-            display_path,
-            function()
-              return path_style
-            end,
-          },
-        }
-      end
-    end
 
     return {
       value = item_path,
