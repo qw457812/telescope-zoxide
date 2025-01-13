@@ -168,7 +168,9 @@ vim.keymap.set("n", "<leader>cd", t.extensions.zoxide.list)
     -- Truncate
     local calc_result_length = function(truncate_len)
       local status = get_status(vim.api.nvim_get_current_buf())
-      local len = vim.api.nvim_win_get_width(status.layout.results.winid) - status.picker.selection_caret:len() - 2
+      -- Compatibility with telescope.nvim 0.1.4
+      local results_win = vim.tbl_get(status, "layout", "results", "winid") or status.results_win
+      local len = vim.api.nvim_win_get_width(results_win) - status.picker.selection_caret:len() - 2
       return type(truncate_len) == "number" and len - truncate_len or len
     end
     local truncate_len = nil
